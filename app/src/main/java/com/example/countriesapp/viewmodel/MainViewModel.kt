@@ -25,13 +25,12 @@ class MainViewModel
         MutableStateFlow<CountryByNameUiState>(CountryByNameUiState.Empty)
     val uiCountryByNameState: StateFlow<CountryByNameUiState> = _uiCountryByNameState
 
-    val countries = MutableStateFlow<List<CountryResponse>?>(null)
-    val selectedCountryCode = MutableStateFlow<String?>(null)
+    private val countries = MutableStateFlow<List<CountryResponse>?>(null)
+    private val selectedCountryCode = MutableStateFlow<String?>(null)
 
     val countryViewData: LiveData<CountryViewData?> =
         combine(countries, selectedCountryCode) { countries, selectedCountryCode ->
-            val country =
-                countries?.firstOrNull { it.cioc == selectedCountryCode } ?: return@combine null
+            val country = countries?.firstOrNull { it.cioc == selectedCountryCode } ?: return@combine null
             val languages = country.languages.map {
                 it.value
             }
@@ -40,12 +39,11 @@ class MainViewModel
         }.asLiveData()
 
     init {
-        viewModelScope.launch {
-            _uiCountryState.value = CountryUiState.Loading
-            getCountries()
-        }
+        _uiCountryState.value = CountryUiState.Loading
+        getCountries()
     }
 
+    //TODO - Componentize fetching logic
     private fun getCountries() = viewModelScope.launch {
         _uiCountryState.value = CountryUiState.Loading
         repository.getCountries().let { response ->
@@ -53,6 +51,7 @@ class MainViewModel
                 val countriesResponse = response.body()
                 _uiCountryState.value = CountryUiState.Success(response.body())
                 selectedCountryCode.value = countriesResponse?.random()?.cioc
+                countries.value = countriesResponse
             } else {
                 _uiCountryState.value = CountryUiState.Error(response.message())
             }
@@ -63,15 +62,9 @@ class MainViewModel
         selectedCountryCode.value = code
     }
 
-    fun getCountryByName(name: String) = viewModelScope.launch {
-        _uiCountryByNameState.value = CountryByNameUiState.Loading
-        repository.getCountryByName(name).let { response ->
-            if (response.isSuccessful) {
-                _uiCountryByNameState.value = CountryByNameUiState.Success(response.body())
-            } else {
-                _uiCountryByNameState.value = CountryByNameUiState.Error(response.message())
-            }
-        }
+    fun selectCountryByName(name: String) {
+        val selectedCountry = countries.value?.firstOrNull { it.name.common == name }
+        selectedCountryCode.value = selectedCountry?.cioc
     }
 
     fun getAllRecords(): LiveData<MutableList<CountryData>> {
