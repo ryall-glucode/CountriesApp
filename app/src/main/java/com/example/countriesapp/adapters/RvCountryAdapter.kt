@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.countriesapp.databinding.CustomListBinding
-import com.example.countriesapp.db.entities.CountryData
+import com.example.countriesapp.viewmodel.CountryViewData
 
 class RvCountryAdapter(private val listener: OnItemClickListener) :
     RecyclerView.Adapter<RvCountryAdapter.ViewHolder>() {
@@ -27,10 +27,11 @@ class RvCountryAdapter(private val listener: OnItemClickListener) :
         }
     }
 
-    private var listData: MutableList<CountryData>? = null
+    private var listData: MutableList<CountryViewData>? = null
 
-    fun setListData(listData: MutableList<CountryData>?) {
+    fun setListData(listData: MutableList<CountryViewData>?) {
         this.listData = listData
+        notifyDataSetChanged()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -46,11 +47,6 @@ class RvCountryAdapter(private val listener: OnItemClickListener) :
                 binding.tvCountryName.text = this.name
                 Glide.with(binding.imageview).load(this.flag)
                     .into(holder.binding.imageview)
-                binding.ivDelete.setOnClickListener {
-                   listener.onItemDeleteClick(position)
-                    listData?.removeAt(position)
-                    notifyDataSetChanged()
-                }
             }
         }
     }
@@ -61,6 +57,5 @@ class RvCountryAdapter(private val listener: OnItemClickListener) :
 
     interface OnItemClickListener {
         fun onItemClick(position: Int)
-        fun onItemDeleteClick(position: Int)
     }
 }

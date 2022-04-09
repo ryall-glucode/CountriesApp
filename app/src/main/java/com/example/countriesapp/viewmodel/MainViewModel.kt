@@ -4,6 +4,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import com.example.countriesapp.db.entities.CountryData
 import com.example.countriesapp.model.CountryResponse
 import com.example.countriesapp.repository.CountryRepository
@@ -34,7 +36,7 @@ class MainViewModel
             val languages = country.languages.map {
                 it.value
             }
-            val flag = country.flag
+            val flag = country.flags.png
             CountryViewData(country.name.common, flag, languages)
         }.asLiveData()
 
@@ -49,11 +51,11 @@ class MainViewModel
         repository.getCountries().let { response ->
             if (response.isSuccessful) {
                 val countriesResponse = response.body()
-                _uiCountryState.value = CountryUiState.Success(response.body())
+           //     _uiCountryState.value = CountryUiState.Success(response.body())
                 selectedCountryCode.value = countriesResponse?.random()?.cioc
                 countries.value = countriesResponse
             } else {
-                _uiCountryState.value = CountryUiState.Error(response.message())
+         //       _uiCountryState.value = CountryUiState.Error(response.message())
             }
         }
     }
@@ -67,16 +69,16 @@ class MainViewModel
         selectedCountryCode.value = selectedCountry?.cioc
     }
 
-    fun getAllRecords(): LiveData<MutableList<CountryData>> {
+    fun getAllRecords(): LiveData<MutableList<CountryViewData>?> {
         return repository.getAllRecords()
     }
 
-    fun insertCountryRecord(countryData: CountryData) {
-        return repository.insertCountryRecord(countryData)
+    fun insertCountryRecord(countryViewData: CountryViewData?) {
+        return repository.insertCountryRecord(countryViewData)
     }
 
-    fun deleteCountryRecord(countryData: CountryData) {
-        return repository.deleteCountryRecord(countryData)
+    fun deleteCountryRecord(countryViewData: CountryViewData) {
+        return repository.deleteCountryRecord(countryViewData)
     }
 
     fun deleteAllRecords() {
@@ -98,4 +100,11 @@ class MainViewModel
     }
 }
 
-data class CountryViewData(val name: String, val flag: String, val languages: List<String>)
+@Entity(
+    tableName = "countries"
+)
+data class CountryViewData(
+    @PrimaryKey(autoGenerate = false)
+    val name: String,
+    val flag: String,
+    val languages: List<String>)

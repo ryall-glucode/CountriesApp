@@ -9,15 +9,14 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.example.countriesapp.R
 import com.example.countriesapp.adapters.RvLanguageAdapter
 import com.example.countriesapp.databinding.FragmentHomeBinding
 import com.example.countriesapp.db.entities.CountryData
+import com.example.countriesapp.viewmodel.CountryViewData
 import com.example.countriesapp.viewmodel.MainViewModel
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -30,7 +29,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
     private var favouriteCountries = mutableListOf<CountryData>()
     var isFavourite = false
-    private var countryData: CountryData? = null
+    private var countryData: CountryViewData? = null
     private lateinit var fab: FloatingActionButton
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -53,6 +52,8 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                 false
             }
         }
+
+
 
 //        lifecycleScope.launchWhenStarted {
 //            viewModel.uiCountryState.collect {
@@ -103,16 +104,17 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 //            }
 //        }
 //
-//        fab.setOnClickListener { view ->
-//                viewModel.insertCountryRecord(countryData!!)
-//                isFavourite = true
-//                fab.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.ic_favourite_selected))
-//            Toast.makeText(context, "Added to favourites", Toast.LENGTH_SHORT).show()
-//            }
+        fab.setOnClickListener { view ->
+                viewModel.insertCountryRecord(countryData)
+                isFavourite = true
+                fab.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.ic_favourite_selected))
+            Toast.makeText(context, "Added to favourites", Toast.LENGTH_SHORT).show()
+            }
     }
 
     private fun observeSelectedCountry() {
         viewModel.countryViewData.observe(this) { countryViewData ->
+            countryData = countryViewData
             //TODO - Improve loading state management
             //TODO - Create view extension for visible/gone
             binding.progressbar.visibility = if (countryViewData == null) View.VISIBLE else View.GONE

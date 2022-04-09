@@ -1,22 +1,19 @@
 package com.example.countriesapp.db
 
 import androidx.room.TypeConverter
-import com.example.countriesapp.model.*
 import com.google.gson.Gson
-
 import com.google.gson.reflect.TypeToken
-import java.lang.reflect.Type
 
 
 class Converters {
     @TypeConverter
-    fun fromString(value: String?): Map<String?, String?>? {
-        val mapType: Type = object : TypeToken<Map<String?, String?>?>() {}.type
-        return Gson().fromJson(value, mapType)
+     fun fromString(value: String?): ArrayList<String?>? {
+        val listType = object : TypeToken<ArrayList<String?>?>() {}.type
+        return Gson().fromJson(value, listType)
     }
 
     @TypeConverter
-    fun fromStringMap(map: Map<String?, String?>?): String? {
+    fun fromStringMap(map: List<String?>?): String? {
         val gson = Gson()
         return gson.toJson(map)
     }
