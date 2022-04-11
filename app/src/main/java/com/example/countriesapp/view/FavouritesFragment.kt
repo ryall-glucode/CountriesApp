@@ -4,29 +4,20 @@ import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
-import androidx.recyclerview.widget.ItemTouchHelper
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.example.countriesapp.R
 import com.example.countriesapp.adapters.RvCountryAdapter
-import com.example.countriesapp.adapters.RvLanguageAdapter
 import com.example.countriesapp.databinding.FragmentFavouritesBinding
-import com.example.countriesapp.db.entities.CountryData
+import com.example.countriesapp.extensions.onSwipe
 import com.example.countriesapp.viewmodel.CountryViewData
 import com.example.countriesapp.viewmodel.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import java.lang.Exception
-import javax.net.ssl.SSLHandshakeException
 
 @AndroidEntryPoint
 class FavouritesFragment : Fragment(R.layout.fragment_favourites),
-    RvCountryAdapter.OnItemClickListener {
+    RvCountryAdapter.OnCountryClickListener {
 
     private lateinit var binding: FragmentFavouritesBinding
     private val viewModel: MainViewModel by activityViewModels()
@@ -75,25 +66,11 @@ class FavouritesFragment : Fragment(R.layout.fragment_favourites),
         fun newInstance() = FavouritesFragment()
     }
 
-    fun initRecyclerView(){
-        binding.rvFavourites.layoutManager = LinearLayoutManager(activity)
+    private fun initRecyclerView(){
         rvCountryAdapter = RvCountryAdapter(this)
-
-        val itemSwipe = object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
-            override fun onMove(
-                recyclerView: RecyclerView,
-                viewHolder: RecyclerView.ViewHolder,
-                target: RecyclerView.ViewHolder
-            ): Boolean {
-                return false
-            }
-
-            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                showDialog(viewHolder)
-            }
+        binding.rvFavourites.onSwipe {
+            showDialog(it)
         }
-        val swap = ItemTouchHelper(itemSwipe)
-        swap.attachToRecyclerView(binding.rvFavourites)
     }
 
     private fun showDialog(viewHolder: RecyclerView.ViewHolder){
@@ -114,8 +91,8 @@ class FavouritesFragment : Fragment(R.layout.fragment_favourites),
         builder.show()
     }
 
-    override fun onItemClick(position: Int) {
-        val item = countryList[position]
-           Toast.makeText(requireContext(), "Chosen: ${item.name}", Toast.LENGTH_SHORT).show()
+    override fun onCountryClick(code: String) {
+        viewModel.selectCountry(code)
+        (activity as? MainActivity)?.selectTab(0)
     }
 }

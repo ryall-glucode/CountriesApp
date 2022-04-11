@@ -41,6 +41,10 @@ class MainActivity : AppCompatActivity() {
             }
         }.attach()
     }
+
+    fun selectTab(index: Int) {
+        binding.viewPager.currentItem = index
+    }
 }
 
 class FragmentAdapter(activity: AppCompatActivity) : FragmentStateAdapter(activity) {

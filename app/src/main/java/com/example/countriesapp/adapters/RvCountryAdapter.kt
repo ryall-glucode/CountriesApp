@@ -9,7 +9,7 @@ import com.bumptech.glide.Glide
 import com.example.countriesapp.databinding.CustomListBinding
 import com.example.countriesapp.viewmodel.CountryViewData
 
-class RvCountryAdapter(private val listener: OnItemClickListener) :
+class RvCountryAdapter(private val listener: OnCountryClickListener) :
     RecyclerView.Adapter<RvCountryAdapter.ViewHolder>() {
 
     inner class ViewHolder(val binding: CustomListBinding) :
@@ -22,7 +22,8 @@ class RvCountryAdapter(private val listener: OnItemClickListener) :
         override fun onClick(v: View?) {
             val position = bindingAdapterPosition
             if (position != RecyclerView.NO_POSITION){
-                listener.onItemClick(position)
+                val clickedCountry = listData?.get(position) ?: return
+                listener.onCountryClick(clickedCountry.countryCode)
             }
         }
     }
@@ -55,7 +56,7 @@ class RvCountryAdapter(private val listener: OnItemClickListener) :
         return listData!!.size
     }
 
-    interface OnItemClickListener {
-        fun onItemClick(position: Int)
+    interface OnCountryClickListener {
+        fun onCountryClick(code: String)
     }
 }

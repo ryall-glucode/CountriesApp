@@ -37,7 +37,7 @@ class MainViewModel
                 it.value
             }
             val flag = country.flags.png
-            CountryViewData(country.name.common, flag, languages)
+            CountryViewData(country.name.common, country.cioc, flag, languages)
         }.asLiveData()
 
     init {
@@ -65,7 +65,7 @@ class MainViewModel
     }
 
     fun selectCountryByName(name: String) {
-        val selectedCountry = countries.value?.firstOrNull { it.name.common == name }
+        val selectedCountry = countries.value?.firstOrNull { it.name.common.contains(name, true) }
         selectedCountryCode.value = selectedCountry?.cioc
     }
 
@@ -106,5 +106,6 @@ class MainViewModel
 data class CountryViewData(
     @PrimaryKey(autoGenerate = false)
     val name: String,
+    val countryCode: String,
     val flag: String,
     val languages: List<String>)

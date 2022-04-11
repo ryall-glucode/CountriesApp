@@ -14,6 +14,7 @@ import com.example.countriesapp.R
 import com.example.countriesapp.adapters.RvLanguageAdapter
 import com.example.countriesapp.databinding.FragmentHomeBinding
 import com.example.countriesapp.db.entities.CountryData
+import com.example.countriesapp.extensions.visibleOrGone
 import com.example.countriesapp.viewmodel.CountryViewData
 import com.example.countriesapp.viewmodel.MainViewModel
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -117,7 +118,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             countryData = countryViewData
             //TODO - Improve loading state management
             //TODO - Create view extension for visible/gone
-            binding.progressbar.visibility = if (countryViewData == null) View.VISIBLE else View.GONE
+            binding.progressbar.visibleOrGone(countryViewData == null)
             countryViewData ?: return@observe
 
             binding.tvCountryName.text = countryViewData.name
@@ -125,7 +126,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                 .load(countryViewData.flag)
                 .into(binding.ivFlag)
 
-            binding.tvLanguagesSpoken.visibility = if (countryViewData.languages.isNotEmpty()) View.VISIBLE else View.GONE
+            binding.tvLanguagesSpoken.visibleOrGone(countryViewData.languages.isNotEmpty())
 
             rvLanguageAdapter.setListData(countryViewData.languages)
         }
