@@ -54,6 +54,7 @@ dependencies {
 
     // for adding recyclerview
     implementation 'androidx.recyclerview:recyclerview:1.2.1'
+    implementation 'androidx.appcompat:appcompat:1.4.1'
 
     // Activity KTX for viewModels()
     implementation "androidx.activity:activity-ktx:1.4.0"
