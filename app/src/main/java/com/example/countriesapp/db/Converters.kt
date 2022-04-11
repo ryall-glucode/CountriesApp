@@ -17,4 +17,16 @@ class Converters {
         val gson = Gson()
         return gson.toJson(map)
     }
+
+
+    @TypeConverter
+    fun toDouble(latLng: List<Double>?): Double? {
+        val gson = Gson()
+        return gson.toJson(latLng).toDouble()
+    }
+
+    @TypeConverter
+    fun fromDouble(latLng: Double?): List<Double?> {
+        return listOf(latLng)
+    }
 }

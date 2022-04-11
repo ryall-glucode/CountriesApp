@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
-import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -13,22 +12,27 @@ import com.bumptech.glide.Glide
 import com.example.countriesapp.R
 import com.example.countriesapp.adapters.RvLanguageAdapter
 import com.example.countriesapp.databinding.FragmentHomeBinding
-import com.example.countriesapp.db.entities.CountryData
 import com.example.countriesapp.extensions.visibleOrGone
 import com.example.countriesapp.viewmodel.CountryViewData
 import com.example.countriesapp.viewmodel.MainViewModel
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class HomeFragment : Fragment(R.layout.fragment_home) {
+class HomeFragment : Fragment(R.layout.fragment_home), OnMapReadyCallback {
 
     private lateinit var binding: FragmentHomeBinding
     private lateinit var rvLanguageAdapter: RvLanguageAdapter
 
     private val viewModel: MainViewModel by activityViewModels()
 
-    private var favouriteCountries = mutableListOf<CountryData>()
     var isFavourite = false
     private var countryData: CountryViewData? = null
     private lateinit var fab: FloatingActionButton
@@ -109,7 +113,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                 viewModel.insertCountryRecord(countryData)
                 isFavourite = true
                 fab.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.ic_favourite_selected))
-            Toast.makeText(context, "Added to favourites", Toast.LENGTH_SHORT).show()
+            Snackbar.make(view, "Added to favourites", Snackbar.LENGTH_LONG).show()
             }
     }
 
@@ -129,6 +133,9 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             binding.tvLanguagesSpoken.visibleOrGone(countryViewData.languages.isNotEmpty())
 
             rvLanguageAdapter.setListData(countryViewData.languages)
+
+            val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
+            mapFragment?.getMapAsync(this)
         }
     }
 
@@ -142,5 +149,16 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
     companion object {
         fun newInstance() = HomeFragment()
+    }
+
+    override fun onMapReady(googleMap: GoogleMap) {
+        val latLng = LatLng(countryData?.latLng?.firstOrNull()!!.toDouble(),  countryData?.latLng!!.last()!!
+            .toDouble())
+        val markerOptions = MarkerOptions().position(latLng).title("I am here!")
+        googleMap.animateCamera(CameraUpdateFactory.newLatLng(latLng))
+        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 5f))
+        googleMap.addMarker(markerOptions)
+        googleMap.setOnMapClickListener {
+        }
     }
 }

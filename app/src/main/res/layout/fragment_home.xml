@@ -11,6 +11,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/dp16"
         android:layout_marginTop="@dimen/dp16"
+        android:padding="5dp"
         android:layout_marginEnd="@dimen/dp16"
         android:hint="Enter country name"
         android:imeOptions="actionSearch"
@@ -21,24 +22,39 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <fragment
+        android:id="@+id/map"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_marginStart="@dimen/dp20"
+        android:layout_marginTop="@dimen/dp20"
+        android:layout_marginEnd="@dimen/dp20"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/etSearch"
+        tools:context="com.example.mapwithmarker.MapsMarkerActivity" />
+
     <TextView
         android:id="@+id/tvCountryName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textAlignment="center"
         android:textColor="@color/gold"
-        android:textSize="40sp"
+        android:textSize="30sp"
+        android:layout_marginTop="@dimen/dp10"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/etSearch" />
+        app:layout_constraintTop_toBottomOf="@+id/map" />
 
     <ImageView
         android:id="@+id/ivFlag"
+        android:layout_width="200dp"
+        android:layout_height="@dimen/dp100"
         android:layout_marginTop="@dimen/dp10"
-        android:layout_width="300dp"
-        android:layout_height="200dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvCountryName" />
@@ -47,14 +63,14 @@
         android:id="@+id/tvLanguagesSpoken"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Languages Spoken:"
         android:layout_marginTop="@dimen/dp10"
         android:gravity="center"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:textSize="@dimen/sp26"
-        android:visibility="gone"
+        android:text="Languages Spoken:"
         android:textColor="@color/gold"
+        android:textSize="20sp"
         android:textStyle="bold"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/ivFlag" />

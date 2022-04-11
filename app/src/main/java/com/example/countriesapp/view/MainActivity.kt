@@ -26,8 +26,6 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // viewModel.deleteAllRecords()
-
         val viewPager: ViewPager2 = binding.viewPager
 
         val tabLayout: TabLayout = binding.tabLayout

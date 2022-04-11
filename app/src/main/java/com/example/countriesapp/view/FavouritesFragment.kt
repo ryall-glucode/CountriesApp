@@ -13,6 +13,7 @@ import com.example.countriesapp.databinding.FragmentFavouritesBinding
 import com.example.countriesapp.extensions.onSwipe
 import com.example.countriesapp.viewmodel.CountryViewData
 import com.example.countriesapp.viewmodel.MainViewModel
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -76,13 +77,14 @@ class FavouritesFragment : Fragment(R.layout.fragment_favourites),
     private fun showDialog(viewHolder: RecyclerView.ViewHolder){
         val builder = AlertDialog.Builder(activity)
         builder.setTitle("Delete Item")
-        builder.setMessage("Are you sure you want to delete item?")
+        builder.setMessage("Are you sure you want to delete country?")
         builder.setPositiveButton("Confirm"){dialog, which->
             val position = viewHolder.absoluteAdapterPosition
             val item = countryList[position]
             countryList.removeAt(position)
             viewModel.deleteCountryRecord(item)
             rvCountryAdapter.notifyItemRemoved(position)
+            Snackbar.make(this.requireView(), "Country removed from favourites", Snackbar.LENGTH_LONG).show()
         }
         builder.setNegativeButton("Cancel"){dialog, which->
             val position =  viewHolder.absoluteAdapterPosition

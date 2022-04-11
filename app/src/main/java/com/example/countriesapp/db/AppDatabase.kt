@@ -8,7 +8,7 @@ import androidx.room.TypeConverters
 import com.example.countriesapp.db.entities.CountryData
 import com.example.countriesapp.viewmodel.CountryViewData
 
-@Database(entities = [CountryViewData::class], version = 12, exportSchema = false)
+@Database(entities = [CountryViewData::class], version = 1, exportSchema = false)
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun getAppDao(): AppDao

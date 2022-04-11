@@ -6,7 +6,6 @@ import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.example.countriesapp.db.entities.CountryData
 import com.example.countriesapp.model.CountryResponse
 import com.example.countriesapp.repository.CountryRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -37,7 +36,11 @@ class MainViewModel
                 it.value
             }
             val flag = country.flags.png
-            CountryViewData(country.name.common, country.cioc, flag, languages)
+            val latLng = country.capitalInfo.latlng.map {
+                it.toString()
+            }
+            CountryViewData(country.name.common, country.cioc, flag, languages, latLng )
+
         }.asLiveData()
 
     init {
@@ -47,7 +50,7 @@ class MainViewModel
 
     //TODO - Componentize fetching logic
     private fun getCountries() = viewModelScope.launch {
-        _uiCountryState.value = CountryUiState.Loading
+    //    _uiCountryState.value = CountryUiState.Loading
         repository.getCountries().let { response ->
             if (response.isSuccessful) {
                 val countriesResponse = response.body()
@@ -108,4 +111,5 @@ data class CountryViewData(
     val name: String,
     val countryCode: String,
     val flag: String,
-    val languages: List<String>)
+    val languages: List<String>,
+    val latLng: List<String?>)
