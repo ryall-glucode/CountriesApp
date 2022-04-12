@@ -52,7 +52,7 @@ fun drawButtons(c: Canvas, viewHolder: RecyclerView.ViewHolder) {
     val buttonWidthWithoutPadding = buttonWidth - 20f
     val corners = 16f
 
-    val itemView = viewHolder.itemView;
+    val itemView = viewHolder.itemView
     val p = Paint()
 
     val leftButton = RectF(
@@ -67,12 +67,12 @@ fun drawButtons(c: Canvas, viewHolder: RecyclerView.ViewHolder) {
 }
 
 fun drawText(text: String, c: Canvas, button: RectF, p: Paint) {
-    val textSize = 60f;
-    p.setColor(Color.WHITE);
-    p.setAntiAlias(true);
-    p.setTextSize(textSize);
+    val textSize = 60f
+    p.color = Color.WHITE
+    p.isAntiAlias = true
+    p.textSize = textSize
 
-    val textWidth = p.measureText(text);
-    c.drawText(text, button.centerX() - (textWidth / 2), button.centerY() + (textSize / 2), p);
+    val textWidth = p.measureText(text)
+    c.drawText(text, button.centerX() - (textWidth / 2), button.centerY() + (textSize / 2), p)
 }
 

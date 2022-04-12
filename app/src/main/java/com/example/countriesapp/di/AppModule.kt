@@ -52,7 +52,7 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun providesHttpLoggingIntercepter() = HttpLoggingInterceptor()
+    fun providesHttpLoggingInterceptor() = HttpLoggingInterceptor()
         .apply {
             level = HttpLoggingInterceptor.Level.BODY
         }

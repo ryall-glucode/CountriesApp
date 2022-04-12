@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">CountriesApp</string>
     <string name="enter_country_name">Enter country name</string>
+    <string name="languages_spoken">Languages Spoken:</string>
 </resources>

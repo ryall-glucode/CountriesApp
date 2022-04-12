@@ -6,7 +6,6 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.example.countriesapp.db.entities.CountryStore
-import com.example.countriesapp.viewmodel.CountryViewData
 
 @Database(entities = [CountryStore::class], version = 1, exportSchema = false)
 @TypeConverters(Converters::class)

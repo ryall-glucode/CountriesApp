@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.bumptech.glide.Glide
@@ -13,7 +12,6 @@ import com.example.countriesapp.R
 import com.example.countriesapp.adapters.RvLanguageAdapter
 import com.example.countriesapp.databinding.FragmentHomeBinding
 import com.example.countriesapp.extensions.visibleOrGone
-import com.example.countriesapp.viewmodel.CountryViewData
 import com.example.countriesapp.viewmodel.MainViewModel
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -31,6 +29,8 @@ class HomeFragment : Fragment(R.layout.fragment_home), OnMapReadyCallback {
     private lateinit var rvLanguageAdapter: RvLanguageAdapter
 
     private lateinit var fab: FloatingActionButton
+    private var lat = 0.00
+    private var lon = 0.00
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -41,7 +41,7 @@ class HomeFragment : Fragment(R.layout.fragment_home), OnMapReadyCallback {
         setUpLanguagesList()
         observeSelectedCountry()
 
-        binding.etSearch.setOnEditorActionListener { v, actionId, event ->
+        binding.etSearch.setOnEditorActionListener { v, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                 viewModel.selectCountryByName(v.text.toString())
                 v.text = ""
@@ -52,58 +52,6 @@ class HomeFragment : Fragment(R.layout.fragment_home), OnMapReadyCallback {
                 false
             }
         }
-
-
-
-//        lifecycleScope.launchWhenStarted {
-//            viewModel.uiCountryState.collect {
-//                when (it) {
-//                    is MainViewModel.CountryUiState.Loading -> {
-//                        binding.progressbar.visibility = View.VISIBLE
-//                    }
-//                    is MainViewModel.CountryUiState.Success -> {
-//                        val randomCountry = it.country?.random()
-//                        countryName = randomCountry?.name?.common ?: ""
-//                        flag = randomCountry?.flags?.png ?: ""
-//
-//                        val languagesResponse =  randomCountry?.languages
-//
-//                        languages = languagesResponse?.map {
-//                            it.value
-//                        } ?: listOf()
-//
-//                /*        countryData = CountryData(null,randomCountry!!.name.common,
-//                            randomCountry.flags.png,
-//                        randomCountry.languages)*/
-//
-//                        binding.progressbar.visibility = View.GONE
-//
-//                        binding.tvCountryName.text = countryName
-//                        Glide.with(requireContext())
-//                            .load(flag)
-//                            .into(binding.ivFlag)
-//
-//                        binding.tvLanguagesSpoken.visibility = View.VISIBLE
-//
-//                        rvLanguageAdapter = RvLanguageAdapter()
-//                        rvLanguageAdapter.setListData(languages)
-//                        rvLanguageAdapter.notifyDataSetChanged()
-//
-//                        binding.rvLanguages.apply {
-//                            adapter = rvLanguageAdapter
-//                            layoutManager = layoutManager
-//                            setHasFixedSize(true)
-//                        }
-//                    }
-//                    is MainViewModel.CountryUiState.Error -> {
-//                        binding.progressbar.visibility = View.GONE
-//                        Snackbar.make(view, it.message, Snackbar.LENGTH_LONG).show()
-//                    }
-//                    else -> Unit
-//                }
-//            }
-//        }
-//
     }
 
     private fun observeSelectedCountry() {
@@ -112,6 +60,9 @@ class HomeFragment : Fragment(R.layout.fragment_home), OnMapReadyCallback {
             //TODO - Create view extension for visible/gone
             binding.progressbar.visibleOrGone(countryViewData == null)
             countryViewData ?: return@observe
+
+            lat = countryViewData.lat
+            lon  = countryViewData.lon
 
             binding.tvCountryName.text = countryViewData.name
             Glide.with(requireContext())
@@ -146,13 +97,12 @@ class HomeFragment : Fragment(R.layout.fragment_home), OnMapReadyCallback {
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
-//        googleMap.clear()
-//        val latLng = LatLng(countryData?.latLng?.firstOrNull()!!.toDouble(),  countryData?.latLng!!.last()!!
-//            .toDouble())
-//        googleMap.animateCamera(CameraUpdateFactory.newLatLng(latLng))
-//        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 3f))
-//        googleMap.addMarker(MarkerOptions().position(latLng))
-//        googleMap.setOnMapClickListener {
-//        }
+        googleMap.clear()
+        val latLng = LatLng(lat,lon)
+        googleMap.animateCamera(CameraUpdateFactory.newLatLng(latLng))
+        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 3f))
+        googleMap.addMarker(MarkerOptions().position(latLng))
+        googleMap.setOnMapClickListener {
+        }
     }
 }

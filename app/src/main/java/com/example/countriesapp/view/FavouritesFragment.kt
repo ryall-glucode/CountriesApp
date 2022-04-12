@@ -11,6 +11,7 @@ import com.example.countriesapp.adapters.RvCountryAdapter
 import com.example.countriesapp.databinding.FragmentFavouritesBinding
 import com.example.countriesapp.extensions.onSwipe
 import com.example.countriesapp.viewmodel.MainViewModel
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -47,17 +48,13 @@ class FavouritesFragment : Fragment(R.layout.fragment_favourites),
         val builder = AlertDialog.Builder(activity)
         builder.setTitle("Delete Item")
         builder.setMessage("Are you sure you want to delete country?")
-        builder.setPositiveButton("Confirm"){dialog, which->
+        builder.setPositiveButton("Confirm"){ _, _ ->
             val position = viewHolder.absoluteAdapterPosition
-//            val item = countryList[position]
-//            countryList.removeAt(position)
-//            viewModel.favourite(item)
-//            adapter.notifyItemRemoved(position)
-//            Snackbar.make(this.requireView(), "Country removed from favourites", Snackbar.LENGTH_LONG).show()
             val country = adapter.countries[position]
             viewModel.favourite(country.countryCode, false)
+            Snackbar.make(this.requireView(), "Country removed from favourites", Snackbar.LENGTH_LONG).show()
         }
-        builder.setNegativeButton("Cancel"){dialog, which->
+        builder.setNegativeButton("Cancel"){ _, _ ->
             val position =  viewHolder.absoluteAdapterPosition
             adapter.notifyItemChanged(position)
         }

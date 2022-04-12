@@ -4,7 +4,6 @@ import androidx.room.TypeConverter
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
-
 class Converters {
     @TypeConverter
      fun fromString(value: String?): ArrayList<String?>? {
@@ -16,17 +15,5 @@ class Converters {
     fun fromStringMap(map: List<String?>?): String? {
         val gson = Gson()
         return gson.toJson(map)
-    }
-
-
-    @TypeConverter
-    fun toDouble(latLng: List<Double>?): Double? {
-        val gson = Gson()
-        return gson.toJson(latLng).toDouble()
-    }
-
-    @TypeConverter
-    fun fromDouble(latLng: Double?): List<Double?> {
-        return listOf(latLng)
     }
 }

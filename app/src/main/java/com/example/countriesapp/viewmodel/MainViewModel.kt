@@ -72,7 +72,8 @@ data class CountryViewData(
     val flag: String?,
     val isFavourite: Boolean,
     val languages: List<String>,
-    val latLng: List<String?> //TODO - change to lat/lon doubles
+    val lat: Double,
+    val lon: Double
 ) {
     constructor(country: Country): this(
         name = country.name,
@@ -80,6 +81,7 @@ data class CountryViewData(
         flag = country.flagUrl,
         isFavourite = country.isFavourite,
         languages = country.languages,
-        latLng = listOf(country.lat.toString(), country.lon.toString())
+        lat = country.lat,
+        lon = country.lon
     )
 }

@@ -1,47 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--TODO - Fix scrolling-->
-<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
         <EditText
             android:id="@+id/etSearch"
             android:layout_width="match_parent"
             android:layout_height="@dimen/dp50"
-            android:layout_marginStart="30dp"
-            android:layout_marginTop="30dp"
-            android:layout_marginEnd="30dp"
+            android:layout_marginStart="@dimen/dp30"
+            android:layout_marginTop="@dimen/dp30"
+            android:layout_marginEnd="@dimen/dp30"
             android:background="@drawable/edit_text_border"
             android:hint="@string/enter_country_name"
             android:imeOptions="actionSearch"
             android:inputType="text"
-            android:padding="5dp"
+            android:padding="@dimen/dp5"
             android:textAlignment="center"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <fragment
-            android:id="@+id/map"
-            android:name="com.google.android.gms.maps.SupportMapFragment"
-            android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:layout_marginStart="30dp"
-            android:layout_marginTop="30dp"
-            android:layout_marginEnd="30dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/etSearch"
-            tools:context="com.example.mapwithmarker.MapsMarkerActivity" />
+    <fragment
+        android:id="@+id/map"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp150"
+        android:layout_marginStart="@dimen/dp50"
+        android:layout_marginTop="@dimen/dp30"
+        android:layout_marginEnd="@dimen/dp50"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/etSearch"
+        tools:context="com.example.mapwithmarker.MapsMarkerActivity" />
 
         <TextView
             android:id="@+id/tvCountryName"
@@ -49,7 +44,7 @@
             android:layout_height="wrap_content"
             android:textAlignment="center"
             android:textColor="@color/gold"
-            android:textSize="40sp"
+            android:textSize="@dimen/sp40"
             android:layout_marginTop="@dimen/dp10"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
@@ -59,7 +54,7 @@
 
         <ImageView
             android:id="@+id/ivFlag"
-            android:layout_width="200dp"
+            android:layout_width="@dimen/dp200"
             android:layout_height="@dimen/dp100"
             android:layout_marginTop="@dimen/dp10"
             app:layout_constraintEnd_toEndOf="parent"
@@ -72,9 +67,9 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/dp10"
             android:gravity="center"
-            android:text="Languages Spoken:"
+            android:text="@string/languages_spoken"
             android:textColor="@color/gold"
-            android:textSize="20sp"
+            android:textSize="@dimen/sp20"
             android:textStyle="bold"
             android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
@@ -88,8 +83,7 @@
             android:layout_height="0dp"
             android:layout_marginStart="@dimen/dp16"
             android:layout_marginEnd="@dimen/dp16"
-            android:layout_marginBottom="16dp"
-            android:nestedScrollingEnabled="false"
+            android:layout_marginBottom="@dimen/dp16"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -122,6 +116,4 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-</androidx.core.widget.NestedScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>

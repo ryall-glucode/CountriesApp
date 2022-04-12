@@ -1,5 +1,6 @@
 package com.example.countriesapp.adapters
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -11,6 +12,7 @@ class RvLanguageAdapter(private var listData: List<String> = listOf()) : Recycle
         RecyclerView.ViewHolder(binding.root)
 
 
+    @SuppressLint("NotifyDataSetChanged")
     fun setListData(listData: List<String>) {
         this.listData = listData
         notifyDataSetChanged()
