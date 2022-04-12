@@ -19,7 +19,4 @@ interface AppDao {
 
     @Query("DELETE from countries")
     fun deleteAllCountries()
-
-
-
 }

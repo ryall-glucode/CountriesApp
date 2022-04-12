@@ -152,12 +152,12 @@ class HomeFragment : Fragment(R.layout.fragment_home), OnMapReadyCallback {
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
+        googleMap.clear()
         val latLng = LatLng(countryData?.latLng?.firstOrNull()!!.toDouble(),  countryData?.latLng!!.last()!!
             .toDouble())
-        val markerOptions = MarkerOptions().position(latLng).title("I am here!")
         googleMap.animateCamera(CameraUpdateFactory.newLatLng(latLng))
-        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 5f))
-        googleMap.addMarker(markerOptions)
+        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 3f))
+        googleMap.addMarker(MarkerOptions().position(latLng))
         googleMap.setOnMapClickListener {
         }
     }

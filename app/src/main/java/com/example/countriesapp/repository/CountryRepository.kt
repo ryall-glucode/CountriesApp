@@ -11,7 +11,7 @@ class CountryRepository constructor(private val apiService: ApiService,
 
     suspend fun getCountries() = apiService.getCountries()
 
-    suspend fun getCountryByName(name: String) = apiService.getCountryByName(name)
+    //suspend fun getCountryByName(name: String) = apiService.getCountryByName(name)
 
     fun insertCountryRecord(countryViewData: CountryViewData?) {
         appDao.insertRecords(countryViewData)
