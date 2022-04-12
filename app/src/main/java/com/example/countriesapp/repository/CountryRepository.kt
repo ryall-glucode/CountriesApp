@@ -1,31 +1,31 @@
 package com.example.countriesapp.repository
 
-import androidx.lifecycle.LiveData
 import com.example.countriesapp.api.ApiService
 import com.example.countriesapp.db.AppDao
-import com.example.countriesapp.db.entities.CountryData
-import com.example.countriesapp.viewmodel.CountryViewData
+import com.example.countriesapp.db.entities.CountryStore
+import com.example.countriesapp.domain.models.Country
+import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
-class CountryRepository constructor(private val apiService: ApiService,
-                                    private val appDao: AppDao) {
+class CountryRepository @Inject internal constructor(
+    private val apiService: ApiService,
+    private val appDao: AppDao
+) {
 
-    suspend fun getCountries() = apiService.getCountries()
+    val countries: Flow<List<CountryStore>> = appDao.getAllRecords()
 
-    //suspend fun getCountryByName(name: String) = apiService.getCountryByName(name)
-
-    fun insertCountryRecord(countryViewData: CountryViewData?) {
-        appDao.insertRecords(countryViewData)
+    suspend fun refreshCountries() {
+        val response = apiService.getCountries()
+        if (response.isSuccessful) {
+            val countries = response.body()?.filter { !it.cioc.isNullOrBlank() } ?: return
+            val stores = countries.map { Country(it).toStore() }
+            insert(*stores.toTypedArray())
+        }
     }
 
-    fun getAllRecords(): LiveData<MutableList<CountryViewData>?> {
-        return appDao.getAllRecords()
-    }
+    suspend fun insert(vararg country: CountryStore) = appDao.insert(*country)
 
-    fun deleteCountryRecord(countryViewData: CountryViewData){
-        appDao.deleteCountryById(countryViewData)
-    }
-
-    fun deleteAllRecords(){
+    suspend fun deleteAllRecords() {
         appDao.deleteAllCountries()
     }
 }

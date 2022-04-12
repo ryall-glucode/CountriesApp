@@ -9,8 +9,13 @@ import com.bumptech.glide.Glide
 import com.example.countriesapp.databinding.CustomListBinding
 import com.example.countriesapp.viewmodel.CountryViewData
 
-class RvCountryAdapter(private val listener: OnCountryClickListener) :
+class RvCountryAdapter(private val listener: OnCountryClickListener, var countries: List<CountryViewData> = listOf()) :
     RecyclerView.Adapter<RvCountryAdapter.ViewHolder>() {
+
+    fun update(listData: List<CountryViewData>) {
+        this.countries = listData
+        notifyDataSetChanged()
+    }
 
     inner class ViewHolder(val binding: CustomListBinding) :
         RecyclerView.ViewHolder(binding.root), View.OnClickListener {
@@ -22,17 +27,10 @@ class RvCountryAdapter(private val listener: OnCountryClickListener) :
         override fun onClick(v: View?) {
             val position = bindingAdapterPosition
             if (position != RecyclerView.NO_POSITION){
-                val clickedCountry = listData?.get(position) ?: return
+                val clickedCountry = countries[position]
                 listener.onCountryClick(clickedCountry.countryCode)
             }
         }
-    }
-
-    private var listData: MutableList<CountryViewData>? = null
-
-    fun setListData(listData: MutableList<CountryViewData>?) {
-        this.listData = listData
-        notifyDataSetChanged()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -44,7 +42,7 @@ class RvCountryAdapter(private val listener: OnCountryClickListener) :
     @SuppressLint("NotifyDataSetChanged")
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         with(holder) {
-            with(listData!![position]) {
+            with(countries[position]) {
                 binding.tvCountryName.text = this.name
                 Glide.with(binding.imageview).load(this.flag)
                     .into(holder.binding.imageview)
@@ -53,7 +51,7 @@ class RvCountryAdapter(private val listener: OnCountryClickListener) :
     }
 
     override fun getItemCount(): Int {
-        return listData!!.size
+        return countries.size
     }
 
     interface OnCountryClickListener {

@@ -4,6 +4,8 @@ import android.app.Application
 import com.example.countriesapp.api.ApiService
 import com.example.countriesapp.db.AppDao
 import com.example.countriesapp.db.AppDatabase
+import com.example.countriesapp.domain.providers.CountriesProvider
+import com.example.countriesapp.domain.providers.CountriesProviderImpl
 import com.example.countriesapp.repository.CountryRepository
 import com.example.countriesapp.utils.Constants.Companion.BASE_URL
 import dagger.Module
@@ -62,4 +64,8 @@ object AppModule {
     @Singleton
     @Provides
     fun provideRepository(apiService: ApiService, appDao: AppDao) = CountryRepository(apiService, appDao)
+
+    @Singleton
+    @Provides
+    fun countriesProvider(repo: CountryRepository): CountriesProvider = CountriesProviderImpl(repo)
 }

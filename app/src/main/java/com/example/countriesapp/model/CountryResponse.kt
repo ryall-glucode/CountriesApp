@@ -1,5 +1,7 @@
 package com.example.countriesapp.model
 
+import com.example.countriesapp.db.entities.CountryStore
+
 data class CountryResponse(
     val altSpellings: List<String>,
     val area: Double,

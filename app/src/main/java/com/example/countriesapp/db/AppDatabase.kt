@@ -5,10 +5,10 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import com.example.countriesapp.db.entities.CountryData
+import com.example.countriesapp.db.entities.CountryStore
 import com.example.countriesapp.viewmodel.CountryViewData
 
-@Database(entities = [CountryViewData::class], version = 1, exportSchema = false)
+@Database(entities = [CountryStore::class], version = 1, exportSchema = false)
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun getAppDao(): AppDao

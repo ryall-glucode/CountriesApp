@@ -1,22 +1,21 @@
 package com.example.countriesapp.db
 
-import androidx.lifecycle.LiveData
 import androidx.room.*
-import com.example.countriesapp.db.entities.CountryData
-import com.example.countriesapp.viewmodel.CountryViewData
+import com.example.countriesapp.db.entities.CountryStore
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface AppDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertRecords(countryViewData: CountryViewData?)
+    suspend fun insert(vararg country: CountryStore)
 
     @Query("SELECT * FROM countries")
-    fun getAllRecords(): LiveData<MutableList<CountryViewData>?>
+    fun getAllRecords(): Flow<List<CountryStore>>
 
     @Delete
-    fun deleteCountryById( countryViewData: CountryViewData)
+    suspend fun deleteCountryById(country: CountryStore)
 
     @Query("DELETE from countries")
-    fun deleteAllCountries()
+    suspend fun deleteAllCountries()
 }

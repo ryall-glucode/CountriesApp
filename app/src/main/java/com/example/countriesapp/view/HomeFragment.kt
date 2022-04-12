@@ -22,19 +22,14 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class HomeFragment : Fragment(R.layout.fragment_home), OnMapReadyCallback {
-
+    private val viewModel: MainViewModel by activityViewModels()
     private lateinit var binding: FragmentHomeBinding
     private lateinit var rvLanguageAdapter: RvLanguageAdapter
 
-    private val viewModel: MainViewModel by activityViewModels()
-
-    var isFavourite = false
-    private var countryData: CountryViewData? = null
     private lateinit var fab: FloatingActionButton
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -109,17 +104,10 @@ class HomeFragment : Fragment(R.layout.fragment_home), OnMapReadyCallback {
 //            }
 //        }
 //
-        fab.setOnClickListener { view ->
-                viewModel.insertCountryRecord(countryData)
-                isFavourite = true
-                fab.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.ic_favourite_selected))
-            Snackbar.make(view, "Added to favourites", Snackbar.LENGTH_LONG).show()
-            }
     }
 
     private fun observeSelectedCountry() {
-        viewModel.countryViewData.observe(this) { countryViewData ->
-            countryData = countryViewData
+        viewModel.selectedCountryViewData.observe(this) { countryViewData ->
             //TODO - Improve loading state management
             //TODO - Create view extension for visible/gone
             binding.progressbar.visibleOrGone(countryViewData == null)
@@ -133,6 +121,12 @@ class HomeFragment : Fragment(R.layout.fragment_home), OnMapReadyCallback {
             binding.tvLanguagesSpoken.visibleOrGone(countryViewData.languages.isNotEmpty())
 
             rvLanguageAdapter.setListData(countryViewData.languages)
+
+            fab.setOnClickListener {
+                viewModel.favourite(countryViewData.countryCode, !countryViewData.isFavourite)
+            }
+
+            fab.setImageResource(if (countryViewData.isFavourite) R.drawable.ic_favourite_selected else R.drawable.ic_favourite_unselected)
 
             val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
             mapFragment?.getMapAsync(this)
@@ -152,13 +146,13 @@ class HomeFragment : Fragment(R.layout.fragment_home), OnMapReadyCallback {
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
-        googleMap.clear()
-        val latLng = LatLng(countryData?.latLng?.firstOrNull()!!.toDouble(),  countryData?.latLng!!.last()!!
-            .toDouble())
-        googleMap.animateCamera(CameraUpdateFactory.newLatLng(latLng))
-        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 3f))
-        googleMap.addMarker(MarkerOptions().position(latLng))
-        googleMap.setOnMapClickListener {
-        }
+//        googleMap.clear()
+//        val latLng = LatLng(countryData?.latLng?.firstOrNull()!!.toDouble(),  countryData?.latLng!!.last()!!
+//            .toDouble())
+//        googleMap.animateCamera(CameraUpdateFactory.newLatLng(latLng))
+//        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 3f))
+//        googleMap.addMarker(MarkerOptions().position(latLng))
+//        googleMap.setOnMapClickListener {
+//        }
     }
 }

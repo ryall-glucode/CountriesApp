@@ -4,63 +4,44 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
-import androidx.room.Entity
-import androidx.room.PrimaryKey
-import com.example.countriesapp.model.CountryResponse
+import com.example.countriesapp.domain.models.Country
+import com.example.countriesapp.domain.providers.CountriesProvider
 import com.example.countriesapp.repository.CountryRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel
-@Inject constructor(private val repository: CountryRepository) : ViewModel() {
-
-    private val _uiCountryState = MutableStateFlow<CountryUiState>(CountryUiState.Empty)
-    val uiCountryState: StateFlow<CountryUiState> = _uiCountryState
-
-    private val _uiCountryByNameState =
-        MutableStateFlow<CountryByNameUiState>(CountryByNameUiState.Empty)
-    val uiCountryByNameState: StateFlow<CountryByNameUiState> = _uiCountryByNameState
-
-    private val countries = MutableStateFlow<List<CountryResponse>?>(null)
+@Inject constructor(
+    private val repository: CountryRepository,
+    private val provider: CountriesProvider
+) : ViewModel() {
     private val selectedCountryCode = MutableStateFlow<String?>(null)
 
-    val countryViewData: LiveData<CountryViewData?> =
-        combine(countries, selectedCountryCode) { countries, selectedCountryCode ->
-            val country = countries?.firstOrNull { it.cioc == selectedCountryCode } ?: return@combine null
-            val languages = country.languages.map {
-                it.value
-            }
-            val flag = country.flags.png
-            val latLng = country.capitalInfo.latlng.map {
-                it.toString()
-            }
-            CountryViewData(country.name.common, country.cioc, flag, languages, latLng )
-
+    val selectedCountryViewData: LiveData<CountryViewData?> =
+        combine(provider.countries, selectedCountryCode) { countries, selectedCountryCode ->
+            val country = countries.firstOrNull { it.countryCode == selectedCountryCode }
+                ?: return@combine null
+            CountryViewData(country)
         }.asLiveData()
 
+    val favouriteCountriesViewData: LiveData<List<CountryViewData>> = provider.favouriteCountries.map { countries ->
+        countries.map { CountryViewData(it) }
+    }.asLiveData()
+
     init {
-        _uiCountryState.value = CountryUiState.Loading
         getCountries()
     }
 
     //TODO - Componentize fetching logic
     private fun getCountries() = viewModelScope.launch {
-    //    _uiCountryState.value = CountryUiState.Loading
-        repository.getCountries().let { response ->
-            if (response.isSuccessful) {
-                val countriesResponse = response.body()
-           //     _uiCountryState.value = CountryUiState.Success(response.body())
-                selectedCountryCode.value = countriesResponse?.random()?.cioc
-                countries.value = countriesResponse
-            } else {
-         //       _uiCountryState.value = CountryUiState.Error(response.message())
-            }
-        }
+        repository.refreshCountries()
+        selectedCountryCode.value = provider.countries.firstOrNull()?.random()?.countryCode
     }
 
     fun selectCountry(code: String) {
@@ -68,48 +49,37 @@ class MainViewModel
     }
 
     fun selectCountryByName(name: String) {
-        val selectedCountry = countries.value?.firstOrNull { it.name.common.contains(name, true) }
-        selectedCountryCode.value = selectedCountry?.cioc
+        viewModelScope.launch {
+            val countries = provider.countries.firstOrNull()
+            val selectedCountry = countries?.firstOrNull { it.name.contains(name, true) }
+            selectedCountryCode.value = selectedCountry?.countryCode
+        }
     }
 
-    fun getAllRecords(): LiveData<MutableList<CountryViewData>?> {
-        return repository.getAllRecords()
-    }
-
-    fun insertCountryRecord(countryViewData: CountryViewData?) {
-        return repository.insertCountryRecord(countryViewData)
-    }
-
-    fun deleteCountryRecord(countryViewData: CountryViewData) {
-        return repository.deleteCountryRecord(countryViewData)
-    }
-
-    fun deleteAllRecords() {
-        return repository.deleteAllRecords()
-    }
-
-    sealed class CountryUiState {
-        data class Success(val country: List<CountryResponse?>?) : CountryUiState()
-        data class Error(val message: String) : CountryUiState()
-        object Loading : CountryUiState()
-        object Empty : CountryUiState()
-    }
-
-    sealed class CountryByNameUiState {
-        data class Success(val country: List<CountryResponse?>?) : CountryByNameUiState()
-        data class Error(val message: String) : CountryByNameUiState()
-        object Loading : CountryByNameUiState()
-        object Empty : CountryByNameUiState()
+    fun favourite(code: String, isFavourite: Boolean) {
+        viewModelScope.launch {
+            val countries = provider.countries.firstOrNull()
+            val country = countries?.firstOrNull { it.countryCode == code } ?: return@launch
+            val countryStore = country.copy(isFavourite = isFavourite).toStore()
+            repository.insert(countryStore)
+        }
     }
 }
 
-@Entity(
-    tableName = "countries"
-)
 data class CountryViewData(
-    @PrimaryKey(autoGenerate = false)
     val name: String,
     val countryCode: String,
-    val flag: String,
+    val flag: String?,
+    val isFavourite: Boolean,
     val languages: List<String>,
-    val latLng: List<String?>)
+    val latLng: List<String?> //TODO - change to lat/lon doubles
+) {
+    constructor(country: Country): this(
+        name = country.name,
+        countryCode = country.countryCode,
+        flag = country.flagUrl,
+        isFavourite = country.isFavourite,
+        languages = country.languages,
+        latLng = listOf(country.lat.toString(), country.lon.toString())
+    )
+}
